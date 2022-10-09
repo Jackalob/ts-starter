@@ -1,34 +1,27 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import DataGrid from './components/DataGrid';
+import './App.css';
+
+const users = [
+  { id: 1, name: 'Hailey', age: 25 },
+  { id: 2, name: 'Brock', age: 30 },
+  { id: 3, name: 'Neal', age: 24 },
+];
+const orders = [
+  { id: 1, orderId: 562, quantity: 5, amount: 75 },
+  { id: 2, orderId: 567, quantity: 3, amount: 45 },
+  { id: 3, orderId: 572, quantity: 1, amount: 15 },
+  { id: 4, orderId: 583, quantity: 2, amount: 30 },
+];
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
+    <>
+      <h2>Users:</h2>
+      <DataGrid items={users} />
+      <h2>Orders:</h2>
+      <DataGrid items={orders} />
+    </>
+  );
 }
 
-export default App
+export default App;
