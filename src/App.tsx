@@ -3,6 +3,9 @@ import './App.css';
 import Heading from './components/Heading';
 import Box from './components/Box';
 import List from './components/List';
+import Incrementer from './components/Incrementer';
+import { useNumber } from './hooks/useNumber';
+import Button from './components/Button';
 
 const initialItems = ['one', 'two', 'three'];
 
@@ -40,6 +43,7 @@ function App() {
   const [payload, setPayload] = useState<Payload | null>(null);
   const [todos, dispatch] = useReducer(reducer, initialValue);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [count, setCount] = useNumber(0);
 
   const onListClick = useCallback((item: string) => alert(item), []);
   const onDeleteTodo = (id: number) => {
@@ -64,18 +68,15 @@ function App() {
       <Box>Hello there</Box>
       <List items={initialItems} onClick={onListClick} />
       <Box>{JSON.stringify(payload)}</Box>
+      <Incrementer value={count} onAddValue={setCount} />
       <div>
         <input ref={inputRef} />
-        <button type="button" onClick={onAddTodo}>
-          Add
-        </button>
+        <Button onClick={onAddTodo}>Add</Button>
       </div>
       {todos.map((todo) => (
         <div key={todo.id}>
           {todo.text}
-          <button type="button" onClick={() => onDeleteTodo(todo.id)}>
-            Remove
-          </button>
+          <Button onClick={() => onDeleteTodo(todo.id)}>Remove</Button>
         </div>
       ))}
     </div>
