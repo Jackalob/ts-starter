@@ -1,16 +1,19 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import React from 'react';
 
 type IProps = {
-  children: React.ReactNode;
-  style?: React.CSSProperties;
+  title?: string;
 };
 
 function Button({
   children,
   style,
+  title,
   ...rest
-}: IProps & React.HTMLAttributes<HTMLButtonElement>) {
+}: IProps &
+  React.DetailedHTMLProps<
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
+    HTMLButtonElement
+  >) {
   return (
     <button
       type="button"
@@ -21,13 +24,13 @@ function Button({
       }}
       {...rest}
     >
-      {children}
+      {title ?? children}
     </button>
   );
 }
 
 Button.defaultProps = {
-  style: {},
+  title: undefined,
 };
 
 export default Button;

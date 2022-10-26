@@ -49,7 +49,9 @@ function App() {
       </Box>
       <div>
         <input ref={inputRef} />
-        <Button onClick={onAddTodo}>Add</Button>
+        <Button onClick={onAddTodo} style={{ padding: '.5rem' }}>
+          Add todo
+        </Button>
       </div>
       <Box>
         <UL
