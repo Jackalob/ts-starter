@@ -1,11 +1,13 @@
-import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import './App.css';
 import Heading from './components/Heading';
 import Box from './components/Box';
 import List from './components/List';
 import Incrementer from './components/Incrementer';
-import { useNumber } from './hooks/useNumber';
 import Button from './components/Button';
+import { useNumber } from './hooks/useNumber';
+import { useTodos } from './hooks/useTodos';
+import type { Todo } from './hooks/useTodos';
 
 const initialItems = ['one', 'two', 'three'];
 
@@ -13,48 +15,21 @@ interface Payload {
   text: string;
 }
 
-interface Todo {
-  id: number;
-  text: string;
-  checked: boolean;
-}
-
-type ActionType =
-  | { type: 'ADD'; text: string }
-  | { type: 'REMOVE'; id: number };
-
-let todoId = 1;
-
-function reducer(state: Todo[], action: ActionType) {
-  switch (action.type) {
-    case 'ADD':
-      // eslint-disable-next-line no-plusplus
-      return [...state, { id: todoId++, text: action.text, checked: false }];
-    case 'REMOVE':
-      return state.filter(({ id }) => id !== action.id);
-    default:
-      throw new Error();
-  }
-}
-
 const initialValue: Todo[] = [];
 
 function App() {
   const [payload, setPayload] = useState<Payload | null>(null);
-  const [todos, dispatch] = useReducer(reducer, initialValue);
   const inputRef = useRef<HTMLInputElement>(null);
   const [count, setCount] = useNumber(0);
+  const { todos, addTodo, removeTodo } = useTodos(initialValue);
 
   const onListClick = useCallback((item: string) => alert(item), []);
-  const onDeleteTodo = (id: number) => {
-    dispatch({ type: 'REMOVE', id });
-  };
   const onAddTodo = useCallback(() => {
     if (inputRef.current && inputRef.current.value !== '') {
-      dispatch({ type: 'ADD', text: inputRef.current.value });
+      addTodo(inputRef.current.value);
       inputRef.current.value = '';
     }
-  }, [dispatch]);
+  }, [addTodo]);
 
   useEffect(() => {
     fetch('/data.json')
@@ -68,17 +43,21 @@ function App() {
       <Box>Hello there</Box>
       <List items={initialItems} onClick={onListClick} />
       <Box>{JSON.stringify(payload)}</Box>
-      <Incrementer value={count} onAddValue={setCount} />
+      <Box>
+        <Incrementer value={count} onAddValue={setCount} />
+      </Box>
       <div>
         <input ref={inputRef} />
         <Button onClick={onAddTodo}>Add</Button>
       </div>
-      {todos.map((todo) => (
-        <div key={todo.id}>
-          {todo.text}
-          <Button onClick={() => onDeleteTodo(todo.id)}>Remove</Button>
-        </div>
-      ))}
+      <Box>
+        {todos.map((todo) => (
+          <div key={todo.id}>
+            {todo.text}
+            <Button onClick={() => removeTodo(todo.id)}>Remove</Button>
+          </div>
+        ))}
+      </Box>
     </div>
   );
 }
