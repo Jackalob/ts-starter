@@ -5,6 +5,7 @@ import Box from './components/Box';
 import List from './components/List';
 import Incrementer from './components/Incrementer';
 import Button from './components/Button';
+import UL from './components/UL';
 import { useNumber } from './hooks/useNumber';
 import { useTodos } from './hooks/useTodos';
 import type { Todo } from './hooks/useTodos';
@@ -51,12 +52,26 @@ function App() {
         <Button onClick={onAddTodo}>Add</Button>
       </div>
       <Box>
-        {todos.map((todo) => (
-          <div key={todo.id}>
-            {todo.text}
-            <Button onClick={() => removeTodo(todo.id)}>Remove</Button>
-          </div>
-        ))}
+        <UL
+          className="hello"
+          items={todos}
+          itemClick={(todo) => alert(todo.text)}
+          render={(todo) => (
+            <>
+              {todo.text}
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeTodo(todo.id);
+                }}
+              >
+                Remove
+              </Button>
+            </>
+          )}
+        >
+          <p>123</p>
+        </UL>
       </Box>
     </div>
   );
