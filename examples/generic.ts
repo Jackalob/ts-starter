@@ -41,5 +41,3 @@ const pokemons: Pokemon[] = [
 
 const ans = ranker(pokemons, ({ hp }) => hp);
 console.log(ans); // [{ name: 'C', hp: 5 }, { name: 'A', hp: 10 }, { name: 'B', hp: 20 }]
-
-export {};
