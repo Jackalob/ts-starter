@@ -26,4 +26,4 @@ function parseCoordinate(arg1: unknown, arg2?: unknown): Coordinate {
 
 console.log(parseCoordinate(121, 25)); // { "x": 121, "y": 25 }
 console.log(parseCoordinate({ x: 121, y: 25 })); // { "x": 121, "y": 25 }
-console.log(parseCoordinate('x:121y:25')); // { "x": 121, "y": 25 }
+console.log(parseCoordinate('x:121,y:25')); // { "x": 121, "y": 25 }
