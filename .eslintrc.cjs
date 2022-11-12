@@ -24,5 +24,9 @@ module.exports = {
     'jsx-a11y/label-has-associated-control': 0,
     'react/jsx-props-no-spreading': 0,
     'react/prop-types': 0,
+    'max-classes-per-file': 0,
+    'class-methods-use-this': 0,
+    '@typescript-eslint/no-empty-function': 0,
+    '@typescript-eslint/no-useless-constructor': 0,
   },
 };
