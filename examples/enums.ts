@@ -40,3 +40,5 @@ function sendEvent(name: string, data: unknown): void {
 }
 
 sendEvent('addToCart', { productId: '10032', count: 5 });
+
+export {};

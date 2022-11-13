@@ -37,3 +37,5 @@ function sendEvent<Name extends keyof EventMap>(
 // }
 
 sendEvent('checkout', { time: 1023, user: 'Bob' }); // ["checkout", { "time": 1023, "user": "Bob" }]
+
+export {};
