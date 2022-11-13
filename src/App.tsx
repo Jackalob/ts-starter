@@ -7,7 +7,7 @@ import Incrementer from './components/Incrementer';
 import Button from './components/Button';
 import UL from './components/UL';
 import { useNumber } from './hooks/useNumber';
-import { useTodos } from './hooks/useTodos';
+import { useTodos, TodosProvider } from './hooks/useTodos';
 import type { Todo } from './hooks/useTodos';
 
 const initialItems = ['one', 'two', 'three'];
@@ -16,13 +16,19 @@ interface Payload {
   text: string;
 }
 
-const initialValue: Todo[] = [];
+const initialValue: Todo[] = [
+  {
+    id: 1,
+    text: 'sad',
+    checked: false,
+  },
+];
 
 function App() {
   const [payload, setPayload] = useState<Payload | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [count, setCount] = useNumber(0);
-  const { todos, addTodo, removeTodo } = useTodos(initialValue);
+  const { todos, addTodo, removeTodo } = useTodos();
 
   const onListClick = useCallback((item: string) => alert(item), []);
   const onAddTodo = useCallback(() => {
@@ -79,4 +85,26 @@ function App() {
   );
 }
 
-export default App;
+function JustShowTodos() {
+  const { todos } = useTodos();
+  return (
+    <UL
+      items={todos}
+      itemClick={() => {}}
+      render={(todo) => <div>{todo.text}</div>}
+    />
+  );
+}
+
+function AppWrapper() {
+  return (
+    <TodosProvider initialTodos={initialValue}>
+      <div style={{ display: 'grid', gridTemplateColumns: '50% 50%' }}>
+        <App />
+        <JustShowTodos />
+      </div>
+    </TodosProvider>
+  );
+}
+
+export default AppWrapper;

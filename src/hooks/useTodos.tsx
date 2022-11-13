@@ -1,4 +1,4 @@
-import { useCallback, useReducer } from 'react';
+import { createContext, useCallback, useContext, useReducer } from 'react';
 
 type ActionType =
   | { type: 'ADD'; text: string }
@@ -24,7 +24,7 @@ function reducer(state: Todo[], action: ActionType) {
   }
 }
 
-function useTodos(initialValue: Todo[]) {
+function useTodosManager(initialValue: Todo[]) {
   const [todos, dispatch] = useReducer(reducer, initialValue);
 
   const addTodo = useCallback((text: string) => {
@@ -42,5 +42,34 @@ function useTodos(initialValue: Todo[]) {
   };
 }
 
+// context
+
+type UseTodosResult = ReturnType<typeof useTodosManager>;
+
+type TodosProviderProps = {
+  initialTodos: Todo[];
+  children: React.ReactNode;
+};
+
+const TodoContext = createContext<UseTodosResult>({
+  todos: [],
+  addTodo: () => {},
+  removeTodo: () => {},
+});
+
+function TodosProvider({ initialTodos, children }: TodosProviderProps) {
+  return (
+    <TodoContext.Provider value={useTodosManager(initialTodos)}>
+      {children}
+    </TodoContext.Provider>
+  );
+}
+
+function useTodos(): UseTodosResult {
+  const context = useContext(TodoContext);
+  if (!context) throw new Error('useTodo must be within TodosProvider');
+  return context;
+}
+
 export type { Todo };
-export { useTodos };
+export { useTodosManager, useTodos, TodosProvider };
