@@ -7,8 +7,10 @@ import Incrementer from './components/Incrementer';
 import Button from './components/Button';
 import UL from './components/UL';
 import { useNumber } from './hooks/useNumber';
-import { useTodos, TodosProvider } from './hooks/useContextTodos';
-import type { Todo } from './hooks/useContextTodos';
+// import { useTodos, TodosProvider } from './hooks/useContextTodos';
+// import type { Todo } from './hooks/useContextTodos';
+import { useTodos } from './hooks/useGlobalTodos';
+import type { Todo } from './hooks/useGlobalTodos';
 
 const initialItems = ['one', 'two', 'three'];
 
@@ -16,7 +18,7 @@ interface Payload {
   text: string;
 }
 
-const initialValue: Todo[] = [
+const initialTodos: Todo[] = [
   {
     id: 1,
     text: 'sad',
@@ -28,7 +30,7 @@ function App() {
   const [payload, setPayload] = useState<Payload | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [count, setCount] = useNumber(0);
-  const { todos, addTodo, removeTodo } = useTodos();
+  const { todos, addTodo, removeTodo } = useTodos(initialTodos);
 
   const onListClick = useCallback((item: string) => alert(item), []);
   const onAddTodo = useCallback(() => {
@@ -86,7 +88,7 @@ function App() {
 }
 
 function JustShowTodos() {
-  const { todos } = useTodos();
+  const { todos } = useTodos(initialTodos);
   return (
     <UL
       items={todos}
@@ -98,12 +100,10 @@ function JustShowTodos() {
 
 function AppWrapper() {
   return (
-    <TodosProvider initialTodos={initialValue}>
-      <div style={{ display: 'grid', gridTemplateColumns: '50% 50%' }}>
-        <App />
-        <JustShowTodos />
-      </div>
-    </TodosProvider>
+    <div style={{ display: 'grid', gridTemplateColumns: '50% 50%' }}>
+      <App />
+      <JustShowTodos />
+    </div>
   );
 }
 
