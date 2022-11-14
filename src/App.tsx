@@ -7,8 +7,8 @@ import Incrementer from './components/Incrementer';
 import Button from './components/Button';
 import UL from './components/UL';
 import { useNumber } from './hooks/useNumber';
-import { useTodos, TodosProvider } from './hooks/useTodos';
-import type { Todo } from './hooks/useTodos';
+import { useTodos, TodosProvider } from './hooks/useContextTodos';
+import type { Todo } from './hooks/useContextTodos';
 
 const initialItems = ['one', 'two', 'three'];
 
