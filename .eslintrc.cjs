@@ -28,5 +28,7 @@ module.exports = {
     'class-methods-use-this': 0,
     '@typescript-eslint/no-empty-function': 0,
     '@typescript-eslint/no-useless-constructor': 0,
+    'no-param-reassign': 0,
+    'import/order': 0,
   },
 };
