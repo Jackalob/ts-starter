@@ -7,38 +7,41 @@ import Incrementer from './components/Incrementer';
 import Button from './components/Button';
 import UL from './components/UL';
 import { useNumber } from './hooks/useNumber';
+// use context
 // import { useTodos, TodosProvider } from './hooks/useContextTodos';
 // import type { Todo } from './hooks/useContextTodos';
-import { useTodos } from './hooks/useGlobalTodos';
-import type { Todo } from './hooks/useGlobalTodos';
+
+// use globalTodos hook
+// import { useTodos } from './hooks/useGlobalTodos';
+// import type { Todo } from './hooks/useGlobalTodos';
+
+// use redux-toolkit
+import { Provider, useDispatch, useSelector } from 'react-redux';
+import { store, RootState } from './store';
+import { addTodo, removeTodo } from './store/slices/todos';
 
 const initialItems = ['one', 'two', 'three'];
-
 interface Payload {
   text: string;
 }
 
-const initialTodos: Todo[] = [
-  {
-    id: 1,
-    text: 'sad',
-    checked: false,
-  },
-];
-
 function App() {
   const [payload, setPayload] = useState<Payload | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
   const [count, setCount] = useNumber(0);
-  const { todos, addTodo, removeTodo } = useTodos(initialTodos);
+
+  const todos = useSelector((state: RootState) => state.todos.todos);
+  const dispatch = useDispatch();
 
   const onListClick = useCallback((item: string) => alert(item), []);
+
   const onAddTodo = useCallback(() => {
     if (inputRef.current && inputRef.current.value !== '') {
-      addTodo(inputRef.current.value);
+      dispatch(addTodo(inputRef.current.value));
       inputRef.current.value = '';
     }
-  }, [addTodo]);
+  }, [dispatch]);
 
   useEffect(() => {
     fetch('/data.json')
@@ -72,7 +75,7 @@ function App() {
               <Button
                 onClick={(e) => {
                   e.stopPropagation();
-                  removeTodo(todo.id);
+                  dispatch(removeTodo(todo.id));
                 }}
               >
                 Remove
@@ -88,7 +91,7 @@ function App() {
 }
 
 function JustShowTodos() {
-  const { todos } = useTodos(initialTodos);
+  const todos = useSelector((state: RootState) => state.todos.todos);
   return (
     <UL
       items={todos}
@@ -100,10 +103,12 @@ function JustShowTodos() {
 
 function AppWrapper() {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '50% 50%' }}>
-      <App />
-      <JustShowTodos />
-    </div>
+    <Provider store={store}>
+      <div style={{ display: 'grid', gridTemplateColumns: '50% 50%' }}>
+        <App />
+        <JustShowTodos />
+      </div>
+    </Provider>
   );
 }
 
