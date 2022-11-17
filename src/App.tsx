@@ -21,12 +21,18 @@ import { useNumber } from './hooks/useNumber';
 // import { addTodo, removeTodo } from './store/slices/todos';
 
 // use zustand hook
-import useTodos from './hooks/useZustandTodos';
+// import useTodos from './hooks/useZustandTodos';
+
+// use xstate
+// 若想要用 global state 官方推薦配合 context
+import useTodos from './hooks/useXStateTodo';
 
 const initialItems = ['one', 'two', 'three'];
 interface Payload {
   text: string;
 }
+
+const initialTodos = [{ id: 1, text: 'hello', checked: false }];
 
 function App() {
   const [payload, setPayload] = useState<Payload | null>(null);
@@ -34,7 +40,7 @@ function App() {
 
   const [count, setCount] = useNumber(0);
 
-  const { todos, addTodo, removeTodo } = useTodos();
+  const { todos, addTodo, removeTodo } = useTodos(initialTodos);
 
   const onListClick = useCallback((item: string) => alert(item), []);
 
@@ -93,7 +99,7 @@ function App() {
 }
 
 function JustShowTodos() {
-  const { todos } = useTodos();
+  const { todos } = useTodos(initialTodos);
   return (
     <UL
       items={todos}
