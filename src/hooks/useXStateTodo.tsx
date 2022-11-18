@@ -10,45 +10,82 @@ interface Todo {
 
 const todoMachine = createMachine<
   { todos: Todo[] },
+  | { type: 'START_WORKING' }
+  | { type: 'END_WORKING' }
   | { type: 'SET_TODOS'; todos: Todo[] }
   | { type: 'ADD_TODO'; text: string }
   | { type: 'REMOVE_TODO'; removeId: number }
->({
-  id: 'todoMachine',
-  initial: 'editing',
-  context: {
-    todos: [],
-  },
-  states: {
-    editing: {
-      on: {
-        SET_TODOS: {
-          actions: assign({
-            // 要改變 context 內的哪個 key
-            todos: (ctx, { todos }) => [...todos],
-          }),
+>(
+  {
+    id: 'todoMachine',
+    initial: 'editing',
+    context: {
+      todos: [],
+    },
+    states: {
+      editing: {
+        on: {
+          START_WORKING: {
+            target: 'working',
+            cond: 'haveUndoneTodos',
+          },
+          SET_TODOS: {
+            actions: assign({
+              // 要改變 context 內的哪個 key
+              todos: (ctx, { todos }) => [...todos],
+            }),
+          },
+          ADD_TODO: {
+            actions: assign({
+              todos: (ctx, { text }) => [
+                ...ctx.todos,
+                { id: ctx.todos.length + 1, text, checked: false },
+              ],
+            }),
+          },
+          REMOVE_TODO: {
+            actions: assign({
+              todos: (ctx, { removeId }) =>
+                ctx.todos.filter((todo) => todo.id !== removeId),
+            }),
+          },
         },
-        ADD_TODO: {
-          actions: assign({
-            todos: (ctx, { text }) => [
-              ...ctx.todos,
-              { id: ctx.todos.length + 1, text, checked: false },
-            ],
-          }),
-        },
-        REMOVE_TODO: {
-          actions: assign({
-            todos: (ctx, { removeId }) =>
-              ctx.todos.filter((todo) => todo.id !== removeId),
-          }),
+      },
+      working: {
+        exit: assign({
+          todos: (ctx) => {
+            const newTodos = [...ctx.todos];
+            const undoneTodo = newTodos.find((todo) => todo.checked === false);
+            if (undoneTodo) {
+              undoneTodo.checked = true;
+            }
+            return newTodos;
+          },
+        }),
+        on: {
+          END_WORKING: {
+            target: 'editing',
+          },
         },
       },
     },
-    working: {},
   },
-});
+  {
+    guards: {
+      haveUndoneTodos: (ctx) =>
+        ctx.todos.some((todo) => todo.checked === false),
+    },
+  }
+);
 
-function useTodo(initialTodos: Todo[]) {
+function useTodo(initialTodos: Todo[]): {
+  isEditing: boolean;
+  todos: Todo[];
+  addTodo: (text: string) => void;
+  removeTodo: (id: number) => void;
+  startWorking: () => void;
+  endWorking: () => void;
+} {
   const [state, send] = useMachine(todoMachine);
 
   const addTodo = useCallback(
@@ -61,11 +98,26 @@ function useTodo(initialTodos: Todo[]) {
     [send]
   );
 
+  const startWorking = useCallback(() => {
+    send({ type: 'START_WORKING' });
+  }, [send]);
+
+  const endWorking = useCallback(() => {
+    send({ type: 'END_WORKING' });
+  }, [send]);
+
   useEffect(() => {
     send({ type: 'SET_TODOS', todos: initialTodos });
   }, [initialTodos, send]);
 
-  return { todos: state.context.todos, addTodo, removeTodo };
+  return {
+    isEditing: state.matches('editing'),
+    startWorking,
+    endWorking,
+    todos: state.context.todos,
+    addTodo,
+    removeTodo,
+  };
 }
 
 export default useTodo;

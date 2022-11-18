@@ -40,7 +40,8 @@ function App() {
 
   const [count, setCount] = useNumber(0);
 
-  const { todos, addTodo, removeTodo } = useTodos(initialTodos);
+  const { isEditing, todos, addTodo, removeTodo, startWorking, endWorking } =
+    useTodos(initialTodos);
 
   const onListClick = useCallback((item: string) => alert(item), []);
 
@@ -73,26 +74,31 @@ function App() {
         </Button>
       </div>
       <Box>
-        <UL
-          className="hello"
-          items={todos}
-          itemClick={(todo) => alert(todo.text)}
-          render={(todo) => (
-            <>
-              {todo.text}
-              <Button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  removeTodo(todo.id);
-                }}
-              >
-                Remove
-              </Button>
-            </>
-          )}
-        >
-          <p>123</p>
-        </UL>
+        {isEditing ? (
+          <>
+            <UL
+              className="hello"
+              items={todos}
+              itemClick={(todo) => alert(todo.text)}
+              render={(todo) => (
+                <>
+                  ({todo.checked ? 'DONE' : 'NOT DONE'}) {todo.text}
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeTodo(todo.id);
+                    }}
+                  >
+                    Remove
+                  </Button>
+                </>
+              )}
+            />
+            <Button onClick={startWorking}>Start working</Button>
+          </>
+        ) : (
+          <Button onClick={endWorking}>End working</Button>
+        )}
       </Box>
     </div>
   );
